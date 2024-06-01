@@ -1,27 +1,36 @@
-//your code here
-let divs = document.querySelectorAll('.image');
 
-divs.forEach((div) => {
-  div.addEventListener('dragstart', function (e) {
-    e.dataTransfer.setData('text/plain', this.id);
-  });
+const images = document.querySelectorAll(".image");
+const flex = document.querySelector(".flex");
 
-  div.addEventListener('dragover', function (e) {
-    e.preventDefault(); // This is necessary to allow dropping
-  });
+flex.addEventListener('dragstart',dragStart);
+flex.addEventListener('dragend',dragEnd);
 
-  div.addEventListener('drop', function (e) {
-    e.preventDefault(); // This is necessary to allow dropping
+for(const image of images){
+    image.addEventListener('dragover', dragOver);
+    image.addEventListener('dragenter', dragEnter);
+    image.addEventListener('dragleave', dragLeave);
+    image.addEventListener('drop', dragDrop);
+}
 
-    const draggedId = e.dataTransfer.getData('text/plain');
-    const draggedElement = document.getElementById(draggedId);
+function dragDrop(){
+    this.className = 'image';
+    this.append(image);
+}
+function dragLeave(){
+   this.className = 'image';
+}
+function dragEnter(e){
+    e.preventDefault();
+    this.className += 'selected'
 
-    // Get the background images
-    const draggedImage = window.getComputedStyle(draggedElement).backgroundImage;
-    const targetImage = window.getComputedStyle(this).backgroundImage;
-
-    // Swap the images
-    draggedElement.style.backgroundImage = targetImage;
-    this.style.backgroundImage = draggedImage;
-  });
-});
+}
+function dragOver(e){
+    e.preventDefault();
+}
+function dragEnd(){
+    this.className = 'image'
+}
+function dragStart(){
+    this.className += 'selected';
+    setTimeout(()=> this.className = 'invisible', 0);
+}
