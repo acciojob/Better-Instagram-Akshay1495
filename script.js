@@ -1,36 +1,41 @@
+let count = 1;
+let draggingElement = null;
+
+const imgs = document.querySelectorAll("img");
+imgs.forEach((e) => {
+  e.id = `drag${count++}`;
+});
 
 const images = document.querySelectorAll(".image");
-const flex = document.querySelector(".flex");
+images.forEach((e) => {
+  e.addEventListener("dragstart", onDragStart);
+  e.addEventListener("dragover", onDragOver);
+  e.addEventListener("drop", onDrop);
+});
 
-flex.addEventListener('dragstart',dragStart);
-flex.addEventListener('dragend',dragEnd);
-
-for(const image of images){
-    image.addEventListener('dragover', dragOver);
-    image.addEventListener('dragenter', dragEnter);
-    image.addEventListener('dragleave', dragLeave);
-    image.addEventListener('drop', dragDrop);
+function onDragStart(event) {
+  draggingElement = event.currentTarget;
 }
 
-function dragDrop(){
-    this.className = 'image';
-    this.append(image);
+function onDragOver(event) {
+  if (draggingElement.parentNode.id === event.currentTarget.id) {
+    return;
+  }
+  event.preventDefault();
 }
-function dragLeave(){
-   this.className = 'image';
-}
-function dragEnter(e){
-    e.preventDefault();
-    this.className += 'selected'
 
-}
-function dragOver(e){
-    e.preventDefault();
-}
-function dragEnd(){
-    this.className = 'image'
-}
-function dragStart(){
-    this.className += 'selected';
-    setTimeout(()=> this.className = 'invisible', 0);
+function onDrop(event) {
+  const id = event.currentTarget.id;
+  const bgImg = event.currentTarget.style.backgroundImage;
+  const text = event.currentTarget.innerText;
+
+  event.currentTarget.id = draggingElement.id;
+  event.currentTarget.style.backgroundImage =
+    draggingElement.style.backgroundImage;
+  event.currentTarget.innerText = draggingElement.innerText;
+
+  draggingElement.id = id;
+  draggingElement.style.backgroundImage = bgImg;
+  draggingElement.innerText = text;
+  draggingElement = null;
 }
