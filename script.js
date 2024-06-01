@@ -1,37 +1,27 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const parent = document.getElementById('parent');
-    let draggedItem = null;
+//your code here
+let divs = document.querySelectorAll('.image');
 
-    parent.addEventListener('dragstart', function (e) {
-        draggedItem = e.target;
-        setTimeout(function () {
-            draggedItem.style.display = 'none';
-        }, 0);
-    });
+divs.forEach((div) => {
+  div.addEventListener('dragstart', function (e) {
+    e.dataTransfer.setData('text/plain', this.id);
+  });
 
-    parent.addEventListener('dragend', function () {
-        setTimeout(function () {
-            draggedItem.style.display = 'block';
-            draggedItem = null;
-        }, 0);
-    });
+  div.addEventListener('dragover', function (e) {
+    e.preventDefault(); // This is necessary to allow dropping
+  });
 
-    parent.addEventListener('dragover', function (e) {
-        e.preventDefault();
-    });
+  div.addEventListener('drop', function (e) {
+    e.preventDefault(); // This is necessary to allow dropping
 
-    parent.addEventListener('dragenter', function (e) {
-        e.preventDefault();
-        if (e.target.classList.contains('image')) {
-            e.target.style.backgroundImage = draggedItem.style.backgroundImage;
-        }
-    });
+    const draggedId = e.dataTransfer.getData('text/plain');
+    const draggedElement = document.getElementById(draggedId);
 
-    parent.addEventListener('drop', function (e) {
-        e.preventDefault();
-        if (e.target.classList.contains('image')) {
-            draggedItem.style.backgroundImage = e.target.style.backgroundImage;
-            e.target.style.backgroundImage = null;
-        }
-    });
+    // Get the background images
+    const draggedImage = window.getComputedStyle(draggedElement).backgroundImage;
+    const targetImage = window.getComputedStyle(this).backgroundImage;
+
+    // Swap the images
+    draggedElement.style.backgroundImage = targetImage;
+    this.style.backgroundImage = draggedImage;
+  });
 });
