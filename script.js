@@ -1,43 +1,40 @@
+document.addEventListener('DOMContentLoaded', function () {
+  const divs = document.querySelectorAll('.draggable');
 
-//your code here
-let count = 1;
-let draggingElement = null;
+  divs.forEach(div => {
+    div.addEventListener('dragstart', dragStart);
+    div.addEventListener('dragover', dragOver);
+    div.addEventListener('drop', drop);
+  });
 
-const imgs = document.querySelectorAll("img");
-imgs.forEach((e) => {
-  e.id = `drag${count++}`;
-});
-
-const images = document.querySelectorAll(".image");
-images.forEach((e) => {
-  e.addEventListener("dragstart", onDragStart);
-  e.addEventListener("dragover", onDragOver);
-  e.addEventListener("drop", onDrop);
-});
-
-function onDragStart(event) {
-  draggingElement = event.currentTarget;
-}
-
-function onDragOver(event) {
-  if (draggingElement.parentNode.id === event.currentTarget.id) {
-    return;
+  function dragStart(event) {
+    event.dataTransfer.setData('text/plain', event.target.id);
   }
-  event.preventDefault();
-}
 
-function onDrop(event) {
-  const id = event.currentTarget.id;
-  const bgImg = event.currentTarget.style.backgroundImage;
-  const text = event.currentTarget.innerText;
+  function dragOver(event) {
+    event.preventDefault();
+  }
 
-  event.currentTarget.id = draggingElement.id;
-  event.currentTarget.style.backgroundImage =
-    draggingElement.style.backgroundImage;
-  event.currentTarget.innerText = draggingElement.innerText;
-
-  draggingElement.id = id;
-  draggingElement.style.backgroundImage = bgImg;
-  draggingElement.innerText = text;
-  draggingElement = null;
-}
+  function drop(event) {
+    event.preventDefault();
+  var draggedId = event.dataTransfer.getData('text/plain');
+  var draggedElement = document.getElementById(draggedId);
+  var targetElement = event.target;
+  
+  if (draggedElement && targetElement && draggedElement !== targetElement && targetElement.classList.contains('draggable')) {
+    var clonedDragged = draggedElement.cloneNode(true);
+    var clonedTarget = targetElement.cloneNode(true);
+    
+    targetElement.replaceWith(clonedDragged);
+    draggedElement.replaceWith(clonedTarget);
+    
+    clonedDragged.addEventListener('dragstart', dragStart);
+    clonedDragged.addEventListener('dragover', dragOver);
+    clonedDragged.addEventListener('drop', drop);
+    
+    clonedTarget.addEventListener('dragstart', dragStart);
+    clonedTarget.addEventListener('dragover', dragOver);
+    clonedTarget.addEventListener('drop', drop);
+  }
+  }
+});
